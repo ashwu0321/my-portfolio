@@ -62,3 +62,10 @@ small {
   outline-offset: 3px;
   border-radius: 2px;
 }
+
+/* Hide the native cursor on fine-pointer (mouse) devices — custom cursor takes over */
+@media (pointer: fine) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
+}

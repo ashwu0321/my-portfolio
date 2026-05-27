@@ -1,4 +1,5 @@
 import Link from "next/link";
+import MagneticLink from "./MagneticLink";
 
 const LEFT_LINKS = [
   { label: "work", href: "#projects" },
@@ -24,41 +25,49 @@ export default function Nav() {
         <ul className="hidden md:flex items-center gap-8" role="list">
           {LEFT_LINKS.map(({ label, href }) => (
             <li key={href}>
-              <Link href={href} className={linkClass}>
-                {label}
-              </Link>
+              <MagneticLink>
+                <Link href={href} className={linkClass}>
+                  {label}
+                </Link>
+              </MagneticLink>
             </li>
           ))}
         </ul>
 
         {/* Center: logo */}
-        <Link
-          href="/"
-          className="font-serif italic font-light text-[22px] tracking-wide text-ink hover:text-muted transition-colors duration-200 select-none"
-          aria-label="Ashley Wu — home"
-        >
-          Ashley Wu
-        </Link>
+        <MagneticLink strength={0.2}>
+          <Link
+            href="/"
+            className="font-serif italic font-light text-[22px] tracking-wide text-ink hover:text-muted transition-colors duration-200 select-none"
+            aria-label="Ashley Wu — home"
+          >
+            Ashley Wu
+          </Link>
+        </MagneticLink>
 
         {/* Right: links + résumé pill */}
         <div className="flex items-center justify-end gap-8">
           <ul className="hidden md:flex items-center gap-8" role="list">
             {RIGHT_LINKS.map(({ label, href }) => (
               <li key={href}>
-                <Link href={href} className={linkClass}>
-                  {label}
-                </Link>
+                <MagneticLink>
+                  <Link href={href} className={linkClass}>
+                    {label}
+                  </Link>
+                </MagneticLink>
               </li>
             ))}
           </ul>
 
-          <a
-            href="/resume.pdf"
-            download
-            className="font-mono text-[11px] uppercase tracking-[0.12em] px-4 py-1.5 rounded-full border border-ink text-ink hover:bg-ink hover:text-paper transition-colors duration-200"
-          >
-            résumé
-          </a>
+          <MagneticLink>
+            <a
+              href="/resume.pdf"
+              download
+              className="font-mono text-[11px] uppercase tracking-[0.12em] px-4 py-1.5 rounded-full border border-ink text-ink hover:bg-ink hover:text-paper transition-colors duration-200"
+            >
+              résumé
+            </a>
+          </MagneticLink>
         </div>
       </nav>
     </header>
