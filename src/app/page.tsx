@@ -1,8 +1,13 @@
-import Hero from "@/components/Hero";
+"use client";
+
+import { useState } from "react";
+import HeroSection from "@/components/HeroSection";
+import LoadingScreen from "@/components/LoadingScreen";
 import Projects, { type Project } from "@/components/Projects";
 import Skills, { type SkillCategory } from "@/components/Skills";
 import Art, { type Artwork } from "@/components/Art";
 import Contact, { type SocialLink } from "@/components/Contact";
+
 // ── Projects ──────────────────────────────────────────────────────────
 
 const PROJECTS: Project[] = [
@@ -93,15 +98,30 @@ const SOCIAL_LINKS: SocialLink[] = [
 ];
 
 // ── Page ──────────────────────────────────────────────────────────────
+//
+// Prop-threading for the hero entry animation:
+//
+//   isLoadingDone (false)
+//       ↓ LoadingScreen.onComplete fires
+//   isLoadingDone (true)
+//       ↓ passed as startAnimation
+//   HeroSection — begins stagger sequence
 
 export default function Home() {
+  const [isLoadingDone, setIsLoadingDone] = useState(false);
+
   return (
-    <main className="flex-1">
-      <Hero />
-      <Projects projects={PROJECTS} />
-      <Skills skills={SKILLS} />
-      <Art artworks={ARTWORKS} />
-      <Contact bio={BIO} links={SOCIAL_LINKS} />
-    </main>
+    <>
+      {/* Loading overlay — renders on top of everything until dismissed */}
+      <LoadingScreen onComplete={() => setIsLoadingDone(true)} />
+
+      <main className="flex-1">
+        <HeroSection startAnimation={isLoadingDone} />
+        <Projects projects={PROJECTS} />
+        <Skills skills={SKILLS} />
+        <Art artworks={ARTWORKS} />
+        <Contact bio={BIO} links={SOCIAL_LINKS} />
+      </main>
+    </>
   );
 }
