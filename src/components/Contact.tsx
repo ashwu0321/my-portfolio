@@ -72,15 +72,21 @@ export default function Contact({
 
   return (
     <section id="contact" className="max-w-screen-xl mx-auto px-8 py-24">
+
+      {/* Section header */}
+      <div className="flex items-end justify-between mb-6 pb-5 border-b border-hairline">
+        <h2 className="font-serif italic font-light leading-none tracking-[-0.02em] text-ink
+                       text-[48px] md:text-[64px]">
+          Get In Touch
+        </h2>
+        <span className={meta}>Response within 48h</span>
+      </div>
+
       <div className="flex gap-16">
 
         {/* ── Left: 160px index column ── */}
         <aside className="hidden md:flex w-40 shrink-0 flex-col gap-8 pt-1">
-          <div className="flex flex-col gap-1.5">
-            <span className={meta}>Get in</span>
-            <span className={meta}>Touch</span>
-          </div>
-          <span className={meta}>Response<br />within 48h</span>
+          <span className={meta}>bcu6cy@<br />virginia.edu</span>
         </aside>
 
         {/* ── Right: bio/links + form ── */}
@@ -88,7 +94,7 @@ export default function Contact({
 
           {/* Bio + social links */}
           <div className="flex flex-col justify-between gap-12">
-            <p className="text-sm leading-relaxed text-ink max-w-xs">
+            <p className="text-base leading-relaxed text-ink max-w-xs">
               {bio}
             </p>
             <div className="flex flex-col gap-4">

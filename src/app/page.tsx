@@ -3,11 +3,11 @@ import Projects, { type Project } from "@/components/Projects";
 import Skills, { type SkillCategory } from "@/components/Skills";
 import Art, { type Artwork } from "@/components/Art";
 import Contact, { type SocialLink } from "@/components/Contact";
-
 // ── Projects ──────────────────────────────────────────────────────────
 
 const PROJECTS: Project[] = [
   {
+    slug: "distributed-classifier",
     title: "Distributed Classifier",
     description:
       "Real-time ML inference pipeline handling 50k events/sec across a distributed cluster.",
@@ -21,6 +21,7 @@ const PROJECTS: Project[] = [
     ],
   },
   {
+    slug: "review-lens",
     title: "Review Lens",
     description:
       "Collaborative code review tool with inline comments and AI-assisted suggestions for pull requests.",
@@ -32,6 +33,7 @@ const PROJECTS: Project[] = [
     ],
   },
   {
+    slug: "env-forge",
     title: "Env Forge",
     description:
       "CLI tool that bootstraps reproducible dev environments from a single config file.",
@@ -40,6 +42,7 @@ const PROJECTS: Project[] = [
     links: [{ label: "GitHub", href: "#" }],
   },
   {
+    slug: "a11y-lens",
     title: "A11y Lens",
     description:
       "Browser extension for real-time WCAG auditing with per-element contrast and role feedback.",

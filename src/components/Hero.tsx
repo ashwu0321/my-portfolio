@@ -16,26 +16,13 @@ function fadeUp(delay: number, y = 16, duration = 0.6) {
   } as const;
 }
 
-// ── Letter-by-letter name ─────────────────────────────────────────────
-// "Ashley" enters small + quick · "Wu" enters large + deliberate
-// After the letters land, a barely-perceptible scale breathing loop begins.
+// ── Full-name headline ────────────────────────────────────────────────
+// Single centered line — letters stagger in left to right.
+// After landing, a barely-perceptible breathing loop begins.
+
+const NAME = "Ashley Wu";
 
 function AnimatedName() {
-  const lines = [
-    {
-      text: "Ashley",
-      startDelay: 0.1,
-      stagger: 0.04,
-      className: "text-[40px] md:text-[54px]",
-    },
-    {
-      text: "Wu",
-      startDelay: 0.36,
-      stagger: 0.08,
-      className: "text-[76px] md:text-[100px]",
-    },
-  ] as const;
-
   return (
     <motion.div
       className="select-none"
@@ -45,31 +32,30 @@ function AnimatedName() {
         repeat: Infinity,
         repeatType: "reverse",
         ease: "easeInOut",
-        delay: 1.5,
+        delay: 1.2,
       }}
     >
       <h1
-        className="font-serif italic font-light leading-[0.88] text-ink mb-14"
-        aria-label="Ashley Wu"
+        className="font-normal leading-none text-ink mb-14
+                   text-[52px] sm:text-[68px] md:text-[96px] lg:text-[120px]"
+        style={{ fontFamily: "var(--font-calista), serif" }}
+        aria-label={NAME}
       >
-        {lines.map(({ text, startDelay, stagger, className }) => (
-          <span key={text} className={`block ${className}`}>
-            {text.split("").map((char, i) => (
-              <motion.span
-                key={i}
-                className="inline-block"
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  delay: startDelay + i * stagger,
-                  duration: 0.55,
-                  ease,
-                }}
-              >
-                {char}
-              </motion.span>
-            ))}
-          </span>
+        {NAME.split("").map((char, i) => (
+          <motion.span
+            key={i}
+            className="inline-block"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              delay: 0.08 + i * 0.045,
+              duration: 0.55,
+              ease,
+            }}
+          >
+            {/* render the space as a non-breaking space so it keeps its width */}
+            {char === " " ? " " : char}
+          </motion.span>
         ))}
       </h1>
     </motion.div>
@@ -115,7 +101,7 @@ const STATS = [
 ] as const;
 
 const ctaClass =
-  "font-serif italic font-light text-[18px] text-ink border-b border-ink pb-0.5 hover:text-accent hover:border-accent transition-colors duration-200";
+  "font-serif italic font-light text-[22px] text-ink border-b border-ink pb-0.5 hover:text-accent hover:border-accent transition-colors duration-200";
 
 const meta = "font-mono text-[10px] uppercase tracking-[0.12em] text-muted";
 
@@ -171,10 +157,10 @@ export default function Hero() {
             <motion.div {...fadeUp(0.8, 8, 0.5)} className="py-5 flex justify-center gap-12">
               {STATS.map(({ value, label }, i) => (
                 <div key={label}>
-                  <p className="font-serif italic font-light text-[36px] leading-none text-ink">
+                  <p className="font-serif italic font-light text-[52px] md:text-[64px] leading-none text-ink">
                     <StatCounter value={value} delay={0.9 + i * 0.05} />
                   </p>
-                  <p className={`${meta} mt-2`}>{label}</p>
+                  <p className={`${meta} mt-3`}>{label}</p>
                 </div>
               ))}
             </motion.div>

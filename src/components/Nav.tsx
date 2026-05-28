@@ -38,7 +38,8 @@ export default function Nav() {
         <MagneticLink strength={0.2}>
           <Link
             href="/"
-            className="font-serif italic font-light text-[22px] tracking-wide text-ink hover:text-muted transition-colors duration-200 select-none"
+            className="font-normal text-[22px] tracking-wide text-ink hover:text-muted transition-colors duration-200 select-none"
+            style={{ fontFamily: "var(--font-calista)" }}
             aria-label="Ashley Wu — home"
           >
             Ashley Wu

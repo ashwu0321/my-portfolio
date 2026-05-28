@@ -1,3 +1,5 @@
+import ParallaxImage from "./ParallaxImage";
+
 // ── Types ────────────────────────────────────────────────────────────
 
 export type Artwork = {
@@ -23,11 +25,13 @@ export default function Art({ artworks }: { artworks: Artwork[] }) {
   function Piece({ artwork, height }: { artwork: Artwork; height: string }) {
     return (
       <figure className="flex flex-col gap-3">
-        <div
-          className={`rounded-2xl bg-placeholder ${height}`}
-          role="img"
-          aria-label={artwork.title}
-        />
+        <ParallaxImage className={`rounded-2xl ${height}`}>
+          <div
+            className="w-full h-full bg-placeholder"
+            role="img"
+            aria-label={artwork.title}
+          />
+        </ParallaxImage>
         <figcaption className="flex items-baseline gap-3">
           <span className={meta}>{artwork.numeral}</span>
           <span className={`${meta} text-ink`}>{artwork.title}</span>
@@ -41,14 +45,21 @@ export default function Art({ artworks }: { artworks: Artwork[] }) {
 
   return (
     <section id="art" className="max-w-screen-xl mx-auto px-8 py-24">
+
+      {/* Section header */}
+      <div className="flex items-end justify-between mb-6 pb-5 border-b border-hairline">
+        <h2 className="font-serif italic font-light leading-none tracking-[-0.02em] text-ink
+                       text-[48px] md:text-[64px]">
+          Gallery
+        </h2>
+        <span className={meta}>I–IV</span>
+      </div>
+
       <div className="flex gap-16">
 
         {/* ── Left: 160px index column ── */}
         <aside className="hidden md:flex w-40 shrink-0 flex-col gap-8 pt-1">
-          <div className="flex flex-col gap-1.5">
-            <span className={meta}>Gallery</span>
-          </div>
-          <span className={meta}>I–IV</span>
+          <span className={meta}>Selected<br />Pieces</span>
         </aside>
 
         {/* ── Right: gallery wall (two staggered columns) ── */}

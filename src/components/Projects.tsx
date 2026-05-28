@@ -1,175 +1,200 @@
-import Image from "next/image";
+"use client";
 
-// ── Types ────────────────────────────────────────────────────────────
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import ParallaxImage from "./ParallaxImage";
+
+// ── Types ─────────────────────────────────────────────────────────────
 
 export type ProjectLink = { label: string; href: string };
 
 export type Project = {
-  title: string;
+  slug:        string;
+  title:       string;
   description: string;
-  pullQuote?: string; // shown only in featured (A) slot
-  tech: string[];
-  image: { src: string; alt: string };
-  links: ProjectLink[];
+  pullQuote?:  string;
+  tech:        string[];
+  image:       { src: string; alt: string };
+  links:       ProjectLink[];
 };
 
-// ── Shared styles ────────────────────────────────────────────────────
+// ── Shared styles ─────────────────────────────────────────────────────
 
 const meta =
   "font-mono text-[10px] uppercase tracking-[0.12em] text-muted";
 
 const ctaLink =
-  "font-serif italic font-light text-base text-ink border-b border-ink pb-0.5 hover:text-accent hover:border-accent transition-colors duration-200";
+  "font-serif italic font-light text-sm text-ink border-b border-ink pb-0.5 hover:text-accent hover:border-accent transition-colors duration-200";
 
-// ── Sub-components ───────────────────────────────────────────────────
+const ease = [0.22, 1, 0.36, 1] as const;
 
-function LabelRow({
-  letter,
-  title,
-  tech,
+// ── Card sizes ────────────────────────────────────────────────────────
+//
+//  large  → A: left column, full height. Full description + links.
+//  small  → B, C: top-right cells. Title + tech only.
+//  wide   → D: bottom-right, spans 2 cols. Title + tech + links.
+
+type CardSize = "large" | "small" | "wide";
+
+const SIZES: CardSize[]    = ["large", "small", "small", "wide"];
+
+// Explicit CSS grid placement for each card index
+const PLACEMENT: string[] = [
+  "col-start-1 row-span-2",              // A – left col, full height
+  "col-start-2 row-start-1",             // B – top centre
+  "col-start-3 row-start-1",             // C – top right
+  "col-start-2 col-span-2 row-start-2",  // D – bottom right wide
+];
+
+// Title sizes per card size
+const TITLE_SIZE: Record<CardSize, string> = {
+  large: "text-[38px] md:text-[50px]",
+  small: "text-[20px] md:text-[26px]",
+  wide:  "text-[28px] md:text-[36px]",
+};
+
+// ── Single card ───────────────────────────────────────────────────────
+
+function ProjectCard({
+  project,
+  index,
+  size,
+  isSpotlit,
+  onEnter,
+  onLeave,
+  onClick,
 }: {
-  letter: string;
-  title: string;
-  tech: string[];
+  project:   Project;
+  index:     number;
+  size:      CardSize;
+  isSpotlit: boolean;
+  onEnter:   () => void;
+  onLeave:   () => void;
+  onClick:   (e: React.MouseEvent) => void;
 }) {
-  return (
-    <div className="flex items-baseline justify-between gap-4">
-      <div className="flex items-baseline gap-3 min-w-0">
-        <span className={meta}>{letter}.</span>
-        <span className={`${meta} truncate`}>{title}</span>
-      </div>
-      <span className={`${meta} shrink-0`}>{tech.join(" · ")}</span>
-    </div>
-  );
-}
+  const letter = String.fromCharCode(65 + index);
 
-function ProjectImage({
-  src,
-  alt,
-  sizes,
-}: {
-  src: string;
-  alt: string;
-  sizes: string;
-}) {
   return (
-    <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-placeholder">
-      {src && (
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          className="object-cover"
-          sizes={sizes}
-        />
+    <motion.article
+      data-cursor="readmore"
+      className="h-full relative rounded-2xl border border-hairline bg-paper overflow-hidden cursor-default"
+      animate={{ opacity: isSpotlit ? 1 : 0.22 }}
+      transition={{ duration: 0.35, ease }}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      onClick={onClick}
+    >
+      {/* Parallax image layer — sits behind the text overlay */}
+      {project.image.src && (
+        <ParallaxImage className="absolute inset-0">
+          <Image
+            src={project.image.src}
+            alt={project.image.alt}
+            fill
+            className="object-cover"
+          />
+        </ParallaxImage>
       )}
-    </div>
-  );
-}
 
-// ── Main component ───────────────────────────────────────────────────
+      {/* Content layer */}
+      <div className="relative z-10 h-full flex flex-col justify-between p-6 md:p-7">
 
-export default function Projects({ projects }: { projects: Project[] }) {
-  const [featured, ...rest] = projects;
-  const catalog = rest.slice(0, 3);
-  const catalogLetters = ["B", "C", "D"] as const;
+        {/* ── Top: index letter + tech ── */}
+        <div className="flex items-start justify-between gap-4">
+          <span className={meta}>{letter}</span>
+          <span className={`${meta} text-right`}>
+            {/* Trim tech list on small cards to avoid overflow */}
+            {project.tech
+              .slice(0, size === "small" ? 2 : project.tech.length)
+              .join(" · ")}
+          </span>
+        </div>
 
-  return (
-    <section id="projects" className="max-w-screen-xl mx-auto px-8 py-24">
-      <div className="flex gap-16">
+        {/* ── Bottom: pull quote (large only) + title + links ── */}
+        <div className="flex flex-col gap-2">
 
-        {/* ── Left: 160px index column ── */}
-        <aside className="hidden md:flex w-40 shrink-0 flex-col gap-8 pt-1">
-          <div className="flex flex-col gap-1.5">
-            <span className={meta}>Selected</span>
-            <span className={meta}>Work</span>
-          </div>
-          <span className={meta}>2024–25</span>
-        </aside>
-
-        {/* ── Right: content ── */}
-        <div className="flex-1 min-w-0">
-
-          {/* Section A: featured ─────────────────────────────────── */}
-          {featured && (
-            <>
-              <LabelRow letter="A" title={featured.title} tech={featured.tech} />
-
-              <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-8 mt-4">
-                {/* Large image */}
-                <ProjectImage
-                  src={featured.image.src}
-                  alt={featured.image.alt}
-                  sizes="(max-width: 768px) 100vw, 55vw"
-                />
-
-                {/* Pull-quote + links */}
-                <div className="flex flex-col justify-between py-1 md:py-3">
-                  {featured.pullQuote && (
-                    <p className="font-serif italic font-light text-[26px] md:text-[30px] leading-[1.2] text-ink">
-                      {featured.pullQuote}
-                    </p>
-                  )}
-                  <div className="flex flex-wrap gap-6 mt-6">
-                    {featured.links.map(({ label, href }) => (
-                      <a
-                        key={label}
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={ctaLink}
-                      >
-                        {label}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </>
+          {size === "large" && (
+            <p className="text-xs leading-relaxed text-muted max-w-[300px] mb-1">
+              {project.pullQuote ?? project.description}
+            </p>
           )}
 
-          {/* Divider ─────────────────────────────────────────────── */}
-          <div className="border-t border-hairline my-12" />
+          <h2
+            className={`font-serif italic font-light leading-none tracking-[-0.01em] text-ink
+                        ${TITLE_SIZE[size]}`}
+          >
+            {project.title}
+          </h2>
 
-          {/* Sections B / C / D: catalog row ────────────────────── */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-12">
-            {catalog.map((project, i) => (
-              <article key={project.title} className="flex flex-col gap-3">
-                <LabelRow
-                  letter={catalogLetters[i]}
-                  title={project.title}
-                  tech={project.tech}
-                />
-
-                <ProjectImage
-                  src={project.image.src}
-                  alt={project.image.alt}
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                />
-
-                <p className="text-sm leading-relaxed text-muted">
-                  {project.description}
-                </p>
-
-                <div className="flex flex-wrap gap-5">
-                  {project.links.map(({ label, href }) => (
-                    <a
-                      key={label}
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={ctaLink}
-                    >
-                      {label}
-                    </a>
-                  ))}
-                </div>
-              </article>
-            ))}
-          </div>
-
+          {(size === "large" || size === "wide") && project.links.length > 0 && (
+            <div className="flex items-center gap-5 mt-1">
+              {project.links.map(({ label, href }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-cursor="default"
+                  onClick={(e) => e.stopPropagation()}
+                  className={ctaLink}
+                >
+                  {label}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </div>
+    </motion.article>
+  );
+}
+
+// ── Section ───────────────────────────────────────────────────────────
+
+export default function Projects({ projects }: { projects: Project[] }) {
+  const [hovered, setHovered] = useState<number | null>(null);
+  const router = useRouter();
+
+  function handleCardClick(e: React.MouseEvent, slug: string) {
+    if ((e.target as Element).closest("a, button")) return;
+    router.push(`/projects/${slug}`);
+  }
+
+  return (
+    <section id="projects" className="max-w-screen-xl mx-auto px-8 py-16 md:py-20">
+
+      {/* Section header */}
+      <div className="flex items-end justify-between mb-6 pb-5 border-b border-hairline">
+        <h2 className="font-serif italic font-light leading-none tracking-[-0.02em] text-ink
+                       text-[48px] md:text-[64px]">
+          Selected Work
+        </h2>
+        <span className={meta}>2024–25</span>
+      </div>
+
+      {/* ── Bento grid ──────────────────────────────────────────────
+           3 columns: A is wide (5 parts), B and C share the right (3+3 parts).
+           2 rows: A spans both, D spans the bottom two right cells.
+           Height is capped so all 4 tiles are visible without scrolling.
+      ─────────────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-[5fr_3fr_3fr] grid-rows-2 gap-3 h-[68vh] min-h-[480px]">
+        {projects.map((project, i) => (
+          <div key={project.slug} className={PLACEMENT[i]}>
+            <ProjectCard
+              project={project}
+              index={i}
+              size={SIZES[i]}
+              isSpotlit={hovered === null || hovered === i}
+              onEnter={() => setHovered(i)}
+              onLeave={() => setHovered(null)}
+              onClick={(e) => handleCardClick(e, project.slug)}
+            />
+          </div>
+        ))}
+      </div>
+
     </section>
   );
 }
