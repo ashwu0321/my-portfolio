@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import HeroToProjects from "@/components/HeroToProjects";
+import HeroSectionCollage from "@/components/HeroSectionCollage";
 import LoadingScreen from "@/components/LoadingScreen";
-import { type Project } from "@/components/Projects";
+import Projects, { type Project } from "@/components/Projects";
 import Skills, { type SkillCategory } from "@/components/Skills";
 import Art, { type Artwork } from "@/components/Art";
 import Contact, { type SocialLink } from "@/components/Contact";
@@ -116,7 +116,8 @@ export default function Home() {
       <LoadingScreen onComplete={() => setIsLoadingDone(true)} />
 
       <main className="flex-1">
-        <HeroToProjects projects={PROJECTS} startAnimation={isLoadingDone} />
+        <HeroSectionCollage startAnimation={isLoadingDone} />
+        <Projects projects={PROJECTS} />
         <Skills skills={SKILLS} />
         <Art artworks={ARTWORKS} />
         <Contact bio={BIO} links={SOCIAL_LINKS} />

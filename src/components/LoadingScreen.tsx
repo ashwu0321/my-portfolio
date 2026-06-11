@@ -66,7 +66,7 @@ export default function LoadingScreen({
   return (
     <div
       className="fixed inset-0 z-[100] overflow-hidden"
-      style={{ backgroundColor: "#1A1814" }}
+      style={{ backgroundColor: "var(--c-black)" }}
     >
       {/* ── Organic ink bleed ─────────────────────────────────────────── */}
       {/* SVG sits behind the name. The feTurbulence filter displaces the
@@ -114,7 +114,7 @@ export default function LoadingScreen({
         <motion.circle
           cx="50%"
           cy="50%"
-          fill="#F2F0EC"
+          style={{ fill: "var(--c-white)" }}
           filter="url(#inkBleed)"
           initial={{ r: 10 }}
           animate={{ r: expanding ? R_FILL : R_POOL }}
@@ -135,10 +135,12 @@ export default function LoadingScreen({
       >
         <motion.span
           style={{
-            fontFamily: "var(--font-exmouth), serif",
+            fontFamily: "var(--font-display), serif",
             fontSize:   72,
+            fontStyle:  "italic",
+            fontWeight: 300,
             lineHeight: 1,
-            color:      "#1A1814",
+            color:      "var(--c-black)",
             position:   "relative",
             zIndex:     10,
           }}

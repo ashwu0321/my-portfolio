@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter, Space_Mono } from "next/font/google";
-import localFont from "next/font/local";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Cursor from "@/components/Cursor";
@@ -27,12 +26,6 @@ const spaceMono = Space_Mono({
   display: "swap",
 });
 
-const exmouth = localFont({
-  src: "../fonts/exmouth_.ttf",
-  variable: "--font-exmouth",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
   title: "Ashley Wu — CS @ UVA",
   description:
@@ -47,7 +40,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${cormorantGaramond.variable} ${inter.variable} ${spaceMono.variable} ${exmouth.variable} h-full antialiased`}
+      className={`${cormorantGaramond.variable} ${inter.variable} ${spaceMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <Cursor />
