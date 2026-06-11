@@ -86,7 +86,12 @@ export default function Contact({
 
         {/* ── Left: 160px index column ── */}
         <aside className="hidden md:flex w-40 shrink-0 flex-col gap-8 pt-1">
-          <span className={meta}>bcu6cy@<br />virginia.edu</span>
+          <a
+            href="mailto:bcu6cy@virginia.edu"
+            className={`${meta} hover:text-accent transition-colors duration-200`}
+          >
+            bcu6cy@virginia.edu
+          </a>
         </aside>
 
         {/* ── Right: bio/links + form ── */}

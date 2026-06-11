@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ParallaxImage from "./ParallaxImage";
+import Placeholder from "./Placeholder";
 
 // ── Types ─────────────────────────────────────────────────────────────
 
@@ -87,16 +88,18 @@ function ProjectCard({
       onClick={onClick}
     >
       {/* Parallax image layer — sits behind the text overlay */}
-      {project.image.src && (
-        <ParallaxImage className="absolute inset-0">
+      <ParallaxImage className="absolute inset-0">
+        {project.image.src ? (
           <Image
             src={project.image.src}
             alt={project.image.alt}
             fill
             className="object-cover"
           />
-        </ParallaxImage>
-      )}
+        ) : (
+          <Placeholder variant="crosshair" label={project.title} />
+        )}
+      </ParallaxImage>
 
       {/* Content layer */}
       <div className="relative z-10 h-full flex flex-col justify-between p-6 md:p-7">
@@ -115,9 +118,9 @@ function ProjectCard({
         {/* ── Bottom: pull quote (large only) + title + links ── */}
         <div className="flex flex-col gap-2">
 
-          {size === "large" && (
-            <p className="text-xs leading-relaxed text-muted max-w-[300px] mb-1">
-              {project.pullQuote ?? project.description}
+          {size !== "wide" && (
+            <p className={`text-xs leading-relaxed text-muted mb-1 ${size === "large" ? "max-w-[300px]" : "line-clamp-3"}`}>
+              {size === "large" ? (project.pullQuote ?? project.description) : project.description}
             </p>
           )}
 
@@ -128,7 +131,7 @@ function ProjectCard({
             {project.title}
           </h2>
 
-          {(size === "large" || size === "wide") && project.links.length > 0 && (
+          {project.links.length > 0 && (
             <div className="flex items-center gap-5 mt-1">
               {project.links.map(({ label, href }) => (
                 <a

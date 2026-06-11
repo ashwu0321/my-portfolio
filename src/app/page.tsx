@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import HeroSection from "@/components/HeroSection";
+import HeroToProjects from "@/components/HeroToProjects";
 import LoadingScreen from "@/components/LoadingScreen";
-import Projects, { type Project } from "@/components/Projects";
+import { type Project } from "@/components/Projects";
 import Skills, { type SkillCategory } from "@/components/Skills";
 import Art, { type Artwork } from "@/components/Art";
 import Contact, { type SocialLink } from "@/components/Contact";
@@ -19,7 +19,7 @@ const PROJECTS: Project[] = [
     pullQuote:
       "What if labeling a stream of events could be as fast as reading them? That question drove every architectural decision here.",
     tech: ["Python", "Kafka", "React"],
-    image: { src: "", alt: "Distributed Classifier — architecture diagram" },
+    image: { src: "/art/8a7f6cea1dddaf2b0446461b2388214d.jpg", alt: "Distributed Classifier — architecture diagram" },
     links: [
       { label: "GitHub", href: "#" },
       { label: "Case Study", href: "#" },
@@ -80,16 +80,16 @@ const SKILLS: SkillCategory[] = [
 // ── Art ───────────────────────────────────────────────────────────────
 
 const ARTWORKS: Artwork[] = [
-  { numeral: "I",   title: "Study in Negative Space", medium: "Digital Illustration" },
-  { numeral: "II",  title: "Systems Diagram No. 3",   medium: "Generative" },
-  { numeral: "III", title: "Anthropomorphic UI",       medium: "Interface Design" },
-  { numeral: "IV",  title: "Palette Study",            medium: "Digital Painting" },
+  { numeral: "I",   title: "Study in Negative Space", medium: "Wet plate photograph", src: "/art/c26cccab8b878003296b28596d909705.jpg" },
+  { numeral: "II",  title: "Lotus Field",             medium: "Silver gelatin print",  src: "/art/2b589479c0734fdb8e8ed0bec8b74720.jpg" },
+  { numeral: "III", title: "White Petals",            medium: "Soft focus photograph", src: "/art/cfc8cbc853889d8ec6d3dbfb772a57e9.jpg" },
+  { numeral: "IV",  title: "Emergence",               medium: "Long exposure",         src: "/art/424ed3ceaa42d162a947f6a82f8a3a42.jpg" },
 ];
 
 // ── Contact ───────────────────────────────────────────────────────────
 
 const BIO =
-  "CS junior at the University of Virginia with a focus on systems and ML. I build tools that are fast, accessible, and honest about their complexity. Always open to interesting problems.";
+  "Always open to interesting problems, internship opportunities, and creative collaborations. If you're working on something hard, let's talk.";
 
 const SOCIAL_LINKS: SocialLink[] = [
   { label: "GitHub",   href: "https://github.com" },
@@ -116,8 +116,7 @@ export default function Home() {
       <LoadingScreen onComplete={() => setIsLoadingDone(true)} />
 
       <main className="flex-1">
-        <HeroSection startAnimation={isLoadingDone} />
-        <Projects projects={PROJECTS} />
+        <HeroToProjects projects={PROJECTS} startAnimation={isLoadingDone} />
         <Skills skills={SKILLS} />
         <Art artworks={ARTWORKS} />
         <Contact bio={BIO} links={SOCIAL_LINKS} />

@@ -1,75 +1,103 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import MagneticLink from "./MagneticLink";
 
-const LEFT_LINKS = [
-  { label: "work", href: "#projects" },
-  { label: "about", href: "#about" },
-] as const;
-
-const RIGHT_LINKS = [
-  { label: "art", href: "#art" },
-  { label: "contact", href: "#contact" },
-] as const;
+// ── Styles ─────────────────────────────────────────────────────────────
 
 const linkClass =
-  "font-mono text-[11px] uppercase tracking-[0.12em] text-ink hover:text-accent transition-colors duration-200";
+  "font-mono text-[11px] uppercase tracking-[0.12em] text-ink " +
+  "hover:text-accent transition-colors duration-200";
+
+const EASE: [number, number, number, number] = [0.23, 1, 0.32, 1];
+
+// ── Logo circle ────────────────────────────────────────────────────────
+//
+// Rests as a small filled circle. On hover it expands and reveals
+// the "AW" initials. Absolute-positioned so it never affects nav layout.
+
+function LogoCircle() {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    // 44×44 tap target wraps the visually-small circle
+    <button
+      aria-label="Scroll to top"
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      className="relative flex items-center justify-center bg-transparent border-0 p-0"
+      style={{ width: 44, height: 44 }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <motion.div
+        className="absolute rounded-full bg-ink flex items-center justify-center overflow-hidden z-50 cursor-pointer"
+        animate={{ width: hovered ? 80 : 12, height: hovered ? 80 : 12 }}
+        transition={{ duration: 0.38, ease: EASE }}
+        // translateX/Y keep the circle centered on its anchor as it grows
+        style={{ top: "50%", left: "50%", translateX: "-50%", translateY: "-50%" }}
+      >
+        <motion.span
+          className="select-none pointer-events-none whitespace-nowrap"
+          style={{
+            fontFamily: "var(--font-display)",
+            fontStyle:  "italic",
+            fontWeight: 300,
+            fontSize:   17,
+            color:      "var(--color-paper, #F2F0EC)",
+          }}
+          animate={{ opacity: hovered ? 1 : 0 }}
+          transition={{ duration: 0.18, delay: hovered ? 0.18 : 0 }}
+        >
+          AW
+        </motion.span>
+      </motion.div>
+    </button>
+  );
+}
+
+// ── Nav ────────────────────────────────────────────────────────────────
 
 export default function Nav() {
   return (
     <header className="sticky top-0 z-50 border-b border-hairline bg-paper">
       <nav
-        className="grid grid-cols-[1fr_auto_1fr] items-center h-16 px-8 max-w-screen-xl mx-auto"
+        className="flex items-center h-16 px-8"
         aria-label="Primary navigation"
       >
-        {/* Left links — hidden on mobile */}
-        <ul className="hidden md:flex items-center gap-8" role="list">
-          {LEFT_LINKS.map(({ label, href }) => (
-            <li key={href}>
-              <MagneticLink>
-                <Link href={href} className={linkClass}>
-                  {label}
-                </Link>
-              </MagneticLink>
-            </li>
-          ))}
+        <ul className="w-full flex items-center justify-between" role="list">
+
+          <li>
+            <MagneticLink>
+              <Link href="#projects" className={linkClass}>work</Link>
+            </MagneticLink>
+          </li>
+
+          <li>
+            <MagneticLink>
+              <Link href="#about" className={linkClass}>about</Link>
+            </MagneticLink>
+          </li>
+
+          {/* ── Centre: expanding logo circle ── */}
+          <li>
+            <LogoCircle />
+          </li>
+
+          <li>
+            <MagneticLink>
+              <Link href="#art" className={linkClass}>art</Link>
+            </MagneticLink>
+          </li>
+
+          <li>
+            <MagneticLink>
+              <Link href="#contact" className={linkClass}>contact</Link>
+            </MagneticLink>
+          </li>
+
         </ul>
-
-        {/* Center: logo */}
-        <MagneticLink strength={0.2}>
-          <Link
-            href="/"
-            className="font-normal text-[22px] tracking-wide text-ink hover:text-muted transition-colors duration-200 select-none"
-            style={{ fontFamily: "var(--font-calista)" }}
-            aria-label="Ashley Wu — home"
-          >
-            Ashley Wu
-          </Link>
-        </MagneticLink>
-
-        {/* Right: links + résumé pill */}
-        <div className="flex items-center justify-end gap-8">
-          <ul className="hidden md:flex items-center gap-8" role="list">
-            {RIGHT_LINKS.map(({ label, href }) => (
-              <li key={href}>
-                <MagneticLink>
-                  <Link href={href} className={linkClass}>
-                    {label}
-                  </Link>
-                </MagneticLink>
-              </li>
-            ))}
-          </ul>
-
-          <MagneticLink>
-            <a
-              href="/resume.pdf"
-              download
-              className="font-mono text-[11px] uppercase tracking-[0.12em] px-4 py-1.5 rounded-full border border-ink text-ink hover:bg-ink hover:text-paper transition-colors duration-200"
-            >
-              résumé
-            </a>
-          </MagneticLink>
-        </div>
       </nav>
     </header>
   );

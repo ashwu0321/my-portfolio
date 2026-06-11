@@ -1,4 +1,6 @@
+import Image from "next/image";
 import ParallaxImage from "./ParallaxImage";
+import Placeholder from "./Placeholder";
 
 // ── Types ────────────────────────────────────────────────────────────
 
@@ -6,6 +8,7 @@ export type Artwork = {
   numeral: string;
   title: string;
   medium?: string;
+  src?: string;
 };
 
 // ── Shared styles ────────────────────────────────────────────────────
@@ -25,12 +28,18 @@ export default function Art({ artworks }: { artworks: Artwork[] }) {
   function Piece({ artwork, height }: { artwork: Artwork; height: string }) {
     return (
       <figure className="flex flex-col gap-3">
-        <ParallaxImage className={`rounded-2xl ${height}`}>
-          <div
-            className="w-full h-full bg-placeholder"
-            role="img"
-            aria-label={artwork.title}
-          />
+        <ParallaxImage className={`rounded-2xl ${height} overflow-hidden`}>
+          {artwork.src ? (
+            <Image
+              src={artwork.src}
+              alt={artwork.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+          ) : (
+            <Placeholder variant="folio" label={artwork.title} />
+          )}
         </ParallaxImage>
         <figcaption className="flex items-baseline gap-3">
           <span className={meta}>{artwork.numeral}</span>
