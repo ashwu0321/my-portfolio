@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import {
   motion, useScroll, useTransform,
@@ -86,14 +86,18 @@ export default function HeroToProjects({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const rm = useReducedMotion() ?? false;
+  const [mounted, setMounted] = useState(false);
 
   // ── Viewport + container motion values ─────────────────────────────
-  const vw = useMotionValue(typeof window !== "undefined" ? window.innerWidth  : 1440);
-  const vh = useMotionValue(typeof window !== "undefined" ? window.innerHeight : 900);
+  // Start with 0 so SSR renders nothing position-dependent; values are
+  // set in the effect below after mount (client-only).
+  const vw = useMotionValue(0);
+  const vh = useMotionValue(0);
   // containerTop in document pixels (updates after mount and on resize)
   const containerTop = useMotionValue(0);
 
   useEffect(() => {
+    setMounted(true);
     const update = () => {
       vw.set(window.innerWidth);
       vh.set(window.innerHeight);
@@ -357,8 +361,8 @@ export default function HeroToProjects({
             </div>
           </motion.div>
 
-          {/* ─── Project card overlays (fade in when photos settle) ─── */}
-          {PHOTOS.map((photo, i) => (
+          {/* ─── Project card overlays + photos: client-only (positions depend on viewport) ─── */}
+          {mounted && PHOTOS.map((photo, i) => (
             <motion.div
               key={`overlay-${i}`}
               className="absolute z-30 pointer-events-none flex flex-col justify-between p-6"
@@ -401,7 +405,7 @@ export default function HeroToProjects({
           ))}
 
           {/* ─── The photos themselves ─── */}
-          {PHOTOS.map((photo, i) => (
+          {mounted && PHOTOS.map((photo, i) => (
             <motion.div
               key={photo.src}
               className="absolute overflow-hidden shadow-sm"
