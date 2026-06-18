@@ -35,6 +35,7 @@ body {
   font-family: var(--font-body), system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.7;
+  text-wrap: pretty;
 }
 
 h1,
@@ -47,6 +48,7 @@ h6 {
   font-weight: 300;
   line-height: 1.1;
   letter-spacing: -0.01em;
+  text-wrap: balance;
 }
 
 /* Metadata / annotation text convention */
@@ -63,25 +65,46 @@ small {
   border-radius: 2px;
 }
 
-/* ─── Paper grain ────────────────────────────────────────────── */
+/* ─── Film grain ─────────────────────────────────────────────── */
 /*
- * Fixed pseudo-element tiles an SVG feTurbulence noise pattern over
- * the entire viewport. pointer-events:none means nothing is blocked.
- * z-index 99 sits above page content but below the loading screen (100)
- * and any custom cursor layer.
- * Tweak opacity to taste — 0.04 is barely-there, 0.08 is noticeable.
+ * Animated noise that shifts position each frame like real film grain.
+ * steps(1, end) creates discrete jumps — continuous ease would look
+ * like a translation, not actual changing noise.
  */
+@keyframes filmgrain {
+  0%   { background-position: 0%   0%;  }
+  10%  { background-position: 30%  60%; }
+  20%  { background-position: 60%  10%; }
+  30%  { background-position: 10%  80%; }
+  40%  { background-position: 70%  30%; }
+  50%  { background-position: 20%  70%; }
+  60%  { background-position: 80%  20%; }
+  70%  { background-position: 40%  90%; }
+  80%  { background-position: 90%  50%; }
+  90%  { background-position: 50%  40%; }
+}
+
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 99;
   pointer-events: none;
-  opacity: 0.18;
+  opacity: 0.22;
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 300px;
+  animation: filmgrain 0.8s steps(1, end) infinite;
+}
+
+/* ─── Risograph misregistration ──────────────────────────────── */
+/*
+ * Subtle red offset shadow on display headings simulates the slight
+ * colour misregistration of risograph / letterpress printing.
+ */
+h1, h2 {
+  text-shadow: 1.5px 1px 0 rgba(204, 51, 51, 0.11);
 }
 
 /* Hide the native cursor on fine-pointer (mouse) devices — custom cursor takes over */
@@ -89,4 +112,71 @@ body::before {
   *, *::before, *::after {
     cursor: none !important;
   }
+}
+
+/* ─── Ambient motion keyframes ───────────────────────────────────── */
+@keyframes spin-cw {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-ccw {
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes star-blink {
+  0%   { transform: scale(0);    opacity: 0; }
+  55%  { transform: scale(1.5);  opacity: 1; }
+  75%  { transform: scale(0.85); }
+  100% { transform: scale(1);    opacity: 1; }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes kenburns {
+  from { transform: scale(1); }
+  to   { transform: scale(1.06); }
+}
+
+@keyframes float {
+  0%   { transform: translateY(0px) rotate(var(--float-r, 0deg)); }
+  50%  { transform: translateY(-14px) rotate(var(--float-r, 0deg)); }
+  100% { transform: translateY(0px) rotate(var(--float-r, 0deg)); }
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Animated underline for CTA links ──────────────────────────── */
+/*
+ * Replaces static border-b. The ::after pseudo-element draws an underline
+ * that wipes out to the left on hover, then sweeps back in from the left on
+ * mouse-leave — giving every CTA link a deliberate, calligraphic gesture.
+ */
+.cta-underline {
+  position: relative;
+  padding-bottom: 2px;
+  text-decoration: none;
+}
+.cta-underline::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(1);
+  transform-origin: right;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.cta-underline:hover::after {
+  transform: scaleX(0);
 }
